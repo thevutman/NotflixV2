@@ -86,7 +86,7 @@ export const api = {
   login: (user: string, password: string) =>
     request<Session>("/auth", { method: "POST", body: json({ user, password }) }),
   guest: () => request<Session>("/auth/guest", { method: "POST" }),
-  register: (data: { name: string; lastName: string; email: string; password: string }) =>
+  register: (data: { name: string; lastName: string; email: string; password: string; birthDate?: string; phone?: string }) =>
     request<Session>("/client", { method: "POST", body: json(data) }),
   me: () => request<Client>("/client/me"),
   updateMe: (data: { name: string; lastName: string; phone?: string; birthDate?: string }) =>
@@ -101,7 +101,7 @@ export const api = {
 };
 
 export const titlePath = (t: Pick<Title, "type" | "slug">) =>
-  `/${t.type === "MOVIE" ? "pelicula" : "serie"}/${t.slug}`;
+  `/${t.type === "MOVIE" ? "movies" : "series"}/${t.slug}`;
 
 export const embedUrl = (video: string) => `https://archive.org/embed/${encodeURIComponent(video)}`;
 

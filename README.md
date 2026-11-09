@@ -6,11 +6,11 @@ de dominio público: Nosferatu, Keaton, Chaplin, Romero, cine negro y los Superm
 Notflix nació en 2022 como proyecto final del ciclo 4 de Misión TIC 2022. Lo lideró Santiago Velasco
 con la ayuda de su equipo. Se apagó cuando la cuenta institucional de MongoDB se cerró y la base de datos
 desapareció. En 2026 se renovó por completo: misma idea, mismo back-end en Spring Boot y mismas rutas de la
-API, ahora con seguridad real, un catálogo que no puede quedarse vacío y una interfaz nueva.
+API, el mismo diseño de 2022 (logo, paleta, cajitas, rutas) y por dentro seguridad real, datos reales y un catálogo que no puede quedarse vacío.
 
 ## Qué tiene
 
-- **Catálogo**: portada con destacados, filas por categoría, ficha de cada título y lo más visto (cuenta real de reproducciones).
+- **Catálogo**: las cajitas de Películas y Series por categoría, Mi lista y lo más visto (cuenta real de reproducciones).
 - **Reproductor**: las copias se sirven desde Internet Archive; las series muestran sus episodios.
 - **Cuentas**: registro, login con JWT, "Entrar como invitado" para recorrerlo sin registrarse y edición de la cuenta.
 - **Mi lista**: el corazón de cada título guarda tus favoritos.
@@ -23,7 +23,7 @@ API, ahora con seguridad real, un catálogo que no puede quedarse vacío y una i
 | --- | --- |
 | API | Java 17+, Spring Boot 3.3, Spring Security (JWT + BCrypt), Spring Data MongoDB, Bean Validation, springdoc (Swagger) |
 | Base de datos | MongoDB Atlas (producción) · MongoDB embebido (desarrollo y pruebas, sin instalar nada) |
-| Front-end | React 19, TypeScript, Vite, Tailwind CSS 4, React Router 7, GSAP |
+| Front-end | React 19, TypeScript, Vite, Tailwind CSS 4, React Router 7 |
 | Publicación | Render (API en Docker) · Vercel (front-end) |
 
 ## Qué cambió frente a 2022
@@ -38,6 +38,7 @@ API, ahora con seguridad real, un catálogo que no puede quedarse vacío y una i
 | Cualquiera podía crear o borrar películas | Escribir en el catálogo exige rol de administrador |
 | "Duración", "actores" y "director" eran texto de ejemplo | Datos reales de cada película |
 | Sin pruebas | Pruebas de integración contra MongoDB real (`ApiFlowTests`) |
+| Diseño en SCSS | El mismo diseño (colores `#1F1D1D`, `#121212`, `#81161C`, logo, esquinas de 50 px, cajitas) en Tailwind, ahora responsive de verdad |
 
 ## Correr en local
 

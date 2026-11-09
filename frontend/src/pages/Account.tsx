@@ -1,31 +1,39 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import type { Client } from "@/lib/types";
 
+/** The 2022 "Mis datos personales": Hola + name, then email, phone and birth date. Now editable. */
 export function Account() {
   const { session, signIn, signOut } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", lastName: "", phone: "" });
-  const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
+  const [me, setMe] = useState<Client | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({ name: "", lastName: "", phone: "", birthDate: "" });
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [confirming, setConfirming] = useState(false);
-  const isGuest = session?.email.startsWith("invitado@");
+  const isGuest = session?.email.startsWith("invitado@") ?? false;
 
   useEffect(() => {
-    if (!session) return;
-    api.me().then((me) => setForm({ name: me.name, lastName: me.lastName ?? "", phone: me.phone ?? "" })).catch(() => undefined);
-  }, [session]);
+    api.me().then((client) => {
+      setMe(client);
+      setForm({ name: client.name, lastName: client.lastName ?? "", phone: client.phone ?? "", birthDate: client.birthDate ?? "" });
+    }, () => setMessage({ ok: false, text: "No pudimos cargar tus datos" }));
+  }, []);
 
-  if (!session) return <Navigate to="/entrar" state={{ from: "/cuenta" }} replace />;
+  if (!session) return null;
 
   const save = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const me = await api.updateMe(form);
-      signIn({ ...session, name: [me.name, me.lastName].filter(Boolean).join(" ") });
-      setStatus({ ok: true, message: "Cambios guardados" });
+      const updated = await api.updateMe(form);
+      setMe(updated);
+      signIn({ ...session, name: [updated.name, updated.lastName].filter(Boolean).join(" ") });
+      setEditing(false);
+      setMessage({ ok: true, text: "Datos actualizados" });
     } catch (err) {
-      setStatus({ ok: false, message: (err as Error).message });
+      setMessage({ ok: false, text: (err as Error).message });
     }
   };
 
@@ -35,56 +43,68 @@ export function Account() {
       signOut();
       navigate("/", { replace: true });
     } catch (err) {
-      setStatus({ ok: false, message: (err as Error).message });
+      setMessage({ ok: false, text: (err as Error).message });
     }
   };
 
   return (
-    <div className="mx-auto min-h-svh max-w-xl px-5 pt-28 pb-20 sm:pt-36">
-      <p className="text-xs font-semibold tracking-[0.2em] text-signal uppercase">Mi cuenta</p>
-      <h1 className="mt-3 font-serif text-6xl">Hola, {session.name.split(" ")[0]}</h1>
-      <p className="mt-2 text-dim">{session.email}</p>
-      {isGuest ? (
-        <p className="mt-6 rounded-2xl border border-cream/10 bg-coal p-4 text-sm text-mist/80">
-          Estás usando la cuenta de invitado, que comparten todos los visitantes. Para editar tus datos crea tu propia cuenta.
-        </p>
-      ) : null}
-      <form onSubmit={save} className="mt-10 space-y-4">
-        <fieldset disabled={isGuest} className="space-y-4 disabled:opacity-50">
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label htmlFor="a-name" className="mb-2 block text-sm font-medium">Nombre</label>
-              <input id="a-name" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="field" />
-            </div>
-            <div>
-              <label htmlFor="a-last" className="mb-2 block text-sm font-medium">Apellido</label>
-              <input id="a-last" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className="field" />
-            </div>
-          </div>
-          <div>
-            <label htmlFor="a-phone" className="mb-2 block text-sm font-medium">Teléfono</label>
-            <input id="a-phone" type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="field" />
-          </div>
-          <button type="submit" className="btn btn-primary">Guardar cambios</button>
-        </fieldset>
-        {status ? (
-          <p role="status" className={`text-sm ${status.ok ? "text-mist" : "text-signal"}`}>{status.message}</p>
-        ) : null}
-      </form>
+    <div className="sheet flex flex-col items-center justify-evenly gap-8 px-6 py-12 text-center text-white">
+      <h1 className="text-[22px] font-extrabold">Hola {me ? `${me.name} ${me.lastName ?? ""}` : session.name}</h1>
 
-      {!isGuest ? (
-        <section className="mt-16 border-t border-cream/10 pt-8">
-          <h2 className="font-semibold">Eliminar cuenta</h2>
-          <p className="mt-2 text-sm text-dim">Se borran tu cuenta y Mi lista. No se puede deshacer.</p>
+      {message ? <p role="status" className={message.ok ? "rounded-md bg-green-700 px-5 py-3 font-bold" : "error-box"}>{message.text}</p> : null}
+
+      {editing ? (
+        <form onSubmit={save} className="flex w-full max-w-[350px] flex-col gap-3 text-left">
+          {(
+            [
+              ["name", "Nombre", "text"],
+              ["lastName", "Apellido", "text"],
+              ["phone", "Teléfono", "tel"],
+              ["birthDate", "Fecha de nacimiento", "date"],
+            ] as const
+          ).map(([key, label, type]) => (
+            <div key={key}>
+              <label htmlFor={`a-${key}`} className="field-label">{label}</label>
+              <input id={`a-${key}`} type={type} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} className="field" required={key === "name"} />
+            </div>
+          ))}
+          <div className="mt-3 flex justify-center gap-3">
+            <button type="submit" className="btn-wine">Guardar</button>
+            <button type="button" className="btn-outline" onClick={() => setEditing(false)}>Cancelar</button>
+          </div>
+        </form>
+      ) : (
+        <div className="flex flex-col gap-4">
+          <h2 className="text-[24px] font-extrabold">Email:</h2>
+          <p className="text-[16px]">{me?.email ?? session.email}</p>
+          <h2 className="text-[24px] font-extrabold">Phone:</h2>
+          <p className="text-[16px]">{me?.phone || "Sin registrar"}</p>
+          <h2 className="text-[24px] font-extrabold">birthDate:</h2>
+          <p className="text-[16px]">{me?.birthDate || "Sin registrar"}</p>
+        </div>
+      )}
+
+      {isGuest ? (
+        <p className="max-w-sm text-[14px] font-light text-mist">
+          Estás en la cuenta de invitado, que comparten todos los visitantes. Crea tu propia cuenta para editar tus datos.
+        </p>
+      ) : !editing ? (
+        <div className="flex flex-col items-center gap-4">
+          <button type="button" className="btn-wine" onClick={() => setEditing(true)}>Editar mis datos</button>
           {confirming ? (
-            <div className="mt-4 flex gap-3">
-              <button type="button" onClick={remove} className="btn bg-signal text-ink">Sí, eliminar</button>
-              <button type="button" onClick={() => setConfirming(false)} className="btn btn-ghost">Cancelar</button>
+            <div className="flex flex-col items-center gap-3">
+              <p className="text-[14px] text-mist">Se borran tu cuenta y Mi lista. No se puede deshacer.</p>
+              <div className="flex gap-3">
+                <button type="button" className="btn-wine !bg-[red]" onClick={remove}>Sí, eliminar</button>
+                <button type="button" className="btn-outline" onClick={() => setConfirming(false)}>Cancelar</button>
+              </div>
             </div>
           ) : (
-            <button type="button" onClick={() => setConfirming(true)} className="btn btn-ghost mt-4">Eliminar mi cuenta</button>
+            <button type="button" className="text-[14px] font-light text-mist underline hover:text-red-500" onClick={() => setConfirming(true)}>
+              Eliminar mi cuenta
+            </button>
           )}
-        </section>
+        </div>
       ) : null}
     </div>
   );
