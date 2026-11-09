@@ -3,6 +3,8 @@
 **Clásicos del cine, gratis y 0 % piratas.** Una plataforma de streaming full stack con películas y series
 de dominio público: Nosferatu, Keaton, Chaplin, Romero, cine negro y los Superman de los Fleischer.
 
+**En vivo:** https://notflix-v2.vercel.app · API: https://notflix-api-hep2.onrender.com/swagger-ui.html
+
 Notflix nació en 2022 como proyecto final del ciclo 4 de Misión TIC 2022. Lo lideró Santiago Velasco
 ([@thevutman](https://github.com/thevutman)) con la ayuda de Marcela Ríos P ([@Mriosp02](https://github.com/Mriosp02)),
 [@savendanog](https://github.com/savendanog) y [@dannyshernandezg](https://github.com/dannyshernandezg). Se apagó cuando la cuenta institucional de MongoDB se cerró y la base de datos
