@@ -23,8 +23,37 @@ function Layout() {
       <main>
         <Outlet />
       </main>
+      <Credits />
       <WakeNotice />
     </>
+  );
+}
+
+const team = [
+  { user: "Mriosp02", name: "Marcela Ríos P" },
+  { user: "savendanog", name: "savendanog" },
+  { user: "dannyshernandezg", name: "dannyshernandezg" },
+];
+
+const gh = (user: string, name: string) => (
+  <a href={`https://github.com/${user}`} target="_blank" rel="noreferrer" className="text-mist underline-offset-2 hover:underline">
+    {name}
+  </a>
+);
+
+/** Who made it, on every page: led by Santiago with the help of the 2022 team. */
+function Credits() {
+  return (
+    <footer className="bg-sheet px-6 pt-4 pb-8 text-center text-[13px] font-light text-dim">
+      Proyecto final del ciclo 4 de Misión TIC 2022, liderado por {gh("thevutman", "Santiago Velasco")} con la ayuda de{" "}
+      {team.map((m, i) => (
+        <span key={m.user}>
+          {gh(m.user, m.name)}
+          {i < team.length - 2 ? ", " : i === team.length - 2 ? " y " : ""}
+        </span>
+      ))}
+      . Renovado en 2026. Películas de dominio público vía Internet Archive.
+    </footer>
   );
 }
 

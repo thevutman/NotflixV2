@@ -4,7 +4,8 @@
 de dominio público: Nosferatu, Keaton, Chaplin, Romero, cine negro y los Superman de los Fleischer.
 
 Notflix nació en 2022 como proyecto final del ciclo 4 de Misión TIC 2022. Lo lideró Santiago Velasco
-con la ayuda de su equipo. Se apagó cuando la cuenta institucional de MongoDB se cerró y la base de datos
+([@thevutman](https://github.com/thevutman)) con la ayuda de Marcela Ríos P ([@Mriosp02](https://github.com/Mriosp02)),
+[@savendanog](https://github.com/savendanog) y [@dannyshernandezg](https://github.com/dannyshernandezg). Se apagó cuando la cuenta institucional de MongoDB se cerró y la base de datos
 desapareció. En 2026 se renovó por completo: misma idea, mismo back-end en Spring Boot y mismas rutas de la
 API, el mismo diseño de 2022 (logo, paleta, cajitas, rutas) y por dentro seguridad real, datos reales y un catálogo que no puede quedarse vacío.
 
