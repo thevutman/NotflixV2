@@ -1,0 +1,153 @@
+@import "tailwindcss";
+
+/* The three greys come straight from the 2022 vars.scss ($color1, $color2, $color3). */
+@theme {
+  --color-ink: #121212;
+  --color-coal: #1f1d1d;
+  --color-ash: #2b2828;
+  --color-mist: #d9d9d9;
+  --color-cream: #ece6da;
+  --color-dim: #8f8a82;
+  --color-signal: #ff4433;
+
+  --font-sans: "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Instrument Serif", ui-serif, Georgia, serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--color-ink);
+  }
+
+  body {
+    margin: 0;
+    min-height: 100svh;
+    background: var(--color-ink);
+    color: var(--color-cream);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--color-signal);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+@layer components {
+  /* Film grain over everything: these are old films, the interface can admit it. */
+  .grain::after {
+    content: "";
+    position: fixed;
+    inset: -50%;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.06;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grain 0.9s steps(4) infinite;
+  }
+
+  @keyframes grain {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(-3%, 2%); }
+    50% { transform: translate(2%, -3%); }
+    75% { transform: translate(-2%, -1%); }
+    100% { transform: translate(0, 0); }
+  }
+
+  .row-scroll {
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+
+  .row-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .field {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid rgb(236 230 218 / 14%);
+    background: rgb(236 230 218 / 5%);
+    padding: 14px 16px;
+    color: var(--color-cream);
+    font-size: 16px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .field:focus {
+    outline: none;
+    border-color: var(--color-signal);
+    background: rgb(236 230 218 / 8%);
+  }
+
+  .field[aria-invalid="true"] {
+    border-color: var(--color-signal);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 999px;
+    padding: 14px 26px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: transform 0.25s var(--ease-out-expo), background 0.2s, color 0.2s;
+    cursor: pointer;
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+
+  .btn-primary {
+    background: var(--color-cream);
+    color: var(--color-ink);
+  }
+
+  .btn-primary:hover {
+    background: #fff;
+  }
+
+  .btn-ghost {
+    background: rgb(236 230 218 / 10%);
+    color: var(--color-cream);
+    backdrop-filter: blur(10px);
+  }
+
+  .btn-ghost:hover {
+    background: rgb(236 230 218 / 18%);
+  }
+
+  .btn[disabled] {
+    opacity: 0.5;
+    cursor: wait;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

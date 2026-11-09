@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: notflix-api
+  data:
+    mongodb:
+      # Locally an embedded MongoDB starts by itself (embedded-mongo profile in pom.xml).
+      # In production (application-prod.yml) MONGODB_URI points to MongoDB Atlas.
+      database: ${MONGODB_DATABASE:notflix}
+      auto-index-creation: true
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: never
+
+notflix:
+  jwt:
+    # Development only. Production sets JWT_SECRET to a long random value.
+    secret: ${JWT_SECRET:dev-only-secret-change-me-please-0123456789}
+    expiration: ${JWT_EXPIRATION:7d}
+  allowed-origins: ${ALLOWED_ORIGINS:http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173}
+  seed: ${SEED_CATALOG:true}
+  guest:
+    email: ${GUEST_EMAIL:invitado@notflix.app}
+    password: ${GUEST_PASSWORD:invitado-notflix-2026}
+    name: Invitado
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 7.0.14
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

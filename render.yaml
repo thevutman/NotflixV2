@@ -1,0 +1,17 @@
+# Render Blueprint: connects this repo and creates the API service. Secrets are typed in Render.
+services:
+  - type: web
+    name: notflix-api
+    runtime: docker
+    rootDir: backend
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GUEST_PASSWORD
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        sync: false
