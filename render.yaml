@@ -5,6 +5,7 @@ services:
     runtime: docker
     rootDir: backend
     plan: free
+    region: virginia # same region as the MongoDB Atlas cluster (AWS us-east-1)
     healthCheckPath: /actuator/health
     envVars:
       - key: MONGODB_URI
